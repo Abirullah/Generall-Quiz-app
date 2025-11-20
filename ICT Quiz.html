@@ -1,0 +1,1760 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ICT Quiz For Mid Term Preparation</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --card: #ffffff;
+        --muted: #6b7280;
+        --accent: #2563eb;
+        --correct: #16a34a;
+        --wrong: #dc2626;
+      }
+      .wow {
+        display: flex;
+        align-items: normal;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background: var(--bg);
+        margin: 0;
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+      .container {
+        width: 100%;
+        max-width: 900px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 8px 30px rgba(17, 24, 39, 0.06);
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: 600;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .start-screen,
+      .user-info {
+        display: grid;
+        gap: 12px;
+        align-items: center;
+        justify-items: center;
+        padding: 36px 12px;
+      }
+      .btn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn.secondary {
+        background: transparent;
+        color: var(--accent);
+        border: 2px solid var(--accent);
+      }
+      .input {
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        width: 100%;
+        max-width: 300px;
+        font-size: 15px;
+      }
+      .progress-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .progress {
+        flex: 1;
+        height: 10px;
+        background: #eef2ff;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .progress > i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, #60a5fa, #2563eb);
+        width: 0%;
+      }
+      .qwrap {
+        margin-top: 12px;
+      }
+      .question {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 14px;
+      }
+      .options {
+        display: grid;
+        gap: 10px;
+      }
+      .option {
+        padding: 12px 14px;
+        border-radius: 8px;
+        border: 1px solid #e6e9ef;
+        cursor: pointer;
+        user-select: none;
+        text-align: left;
+      }
+      .option.disabled {
+        pointer-events: none;
+        opacity: 0.7;
+      }
+      .option.correct {
+        background: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.3);
+      }
+      .option.wrong {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: rgba(239, 68, 68, 0.2);
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 16px;
+      }
+      .timer {
+        font-weight: 700;
+        color: var(--wrong);
+      }
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .result {
+        padding: 24px;
+        text-align: center;
+      }
+      .big {
+        font-size: 42px;
+        font-weight: 800;
+      }
+      .summary {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-top: 16px;
+      }
+      .chip {
+        background: #f8fafc;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #eef2ff;
+      }
+      .small {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      @media (max-width: 640px) {
+        .question {
+          font-size: 16px;
+        }
+        .big {
+          font-size: 34px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card" id="card">
+        <div class="header">
+          <div>
+            <div class="wow">
+              <div class="title">ICT Quiz For Mid Term Preparation</div>
+              <p>Created by ABIRULLAH</p>
+            </div>
+
+            <div class="meta">
+              150 Questions • 30s each • Single choice • Random order
+            </div>
+          </div>
+          <div class="progress-wrap">
+            <div id="qcounter" class="small">Question 0 / 150</div>
+            <div class="progress" aria-hidden="true">
+              <i id="progressBar"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Info Screen -->
+        <div id="userInfoScreen" class="user-info">
+          <h2>Enter your information</h2>
+          <input
+            id="userName"
+            class="input"
+            type="text"
+            placeholder="Your name"
+            required
+          />
+          <input
+            id="userEmail"
+            class="input"
+            type="email"
+            placeholder="Your email"
+            required
+          />
+          <button id="continueBtn" class="btn">Continue</button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="start-screen" style="display: none">
+          <div style="max-width: 520px">
+            <h2 style="margin: 0 0 8px">Ready to test your grammar?</h2>
+            <p class="small" style="margin: 0">
+              You will get 30 seconds for each question. Questions and options
+              will be randomized every time you start. Select one option — you
+              cannot change the answer. Use Skip to move on.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px">
+            <button id="startBtn" class="btn">Start Quiz</button>
+            <button id="rulesBtn" class="btn secondary">View Rules</button>
+          </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" style="display: none">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <div id="timer" class="timer">Time Left: 30s</div>
+            <div class="small">Score: <span id="score">0</span></div>
+          </div>
+
+          <div class="qwrap">
+            <div id="question" class="question">Question text</div>
+            <div id="options" class="options" role="list"></div>
+          </div>
+
+          <div class="controls">
+            <button id="skipBtn" class="btn secondary">Skip</button>
+            <div style="flex: 1"></div>
+            <div class="small" id="feedback" aria-live="polite"></div>
+          </div>
+
+          <div class="footer">
+            <div class="small">Select one answer. Locked after selection.</div>
+            <div class="small">Progress: <span id="progressText">0%</span></div>
+          </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" style="display: none" class="result">
+          <div class="big" id="finalScore">0 / 150</div>
+          <div class="small" id="finalPercent">0%</div>
+
+          <div class="summary">
+            <div class="chip">
+              <div style="font-weight: 700" id="rightCount">0</div>
+              <div class="small">Correct</div>
+            </div>
+            <div class="chip">
+              <div style="font-weight: 700" id="wrongCount">0</div>
+              <div class="small">Wrong</div>
+            </div>
+            <div class="chip">
+              <div style="font-weight: 700" id="skippedCount">0</div>
+              <div class="small">Skipped</div>
+            </div>
+          </div>
+
+          <div
+            style="
+              margin-top: 18px;
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+              align-items: center;
+            "
+          >
+            <button id="restartBtn" class="btn">Restart Quiz</button>
+            <button id="sendEmailBtn" class="btn secondary">No Thanks</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <script>
+      // 🔹 Replace with your actual EmailJS credentials
+      emailjs.init("hpg79R3EbC093_qSU");
+
+      let userInfo = { name: "", email: "" };
+
+      // User info screen
+      document.getElementById("continueBtn").addEventListener("click", () => {
+        const name = document.getElementById("userName").value.trim();
+        const email = document.getElementById("userEmail").value.trim();
+        if (!name || !email)
+          return alert("Please fill in your name and email.");
+        userInfo = { name, email };
+        document.getElementById("userInfoScreen").style.display = "none";
+        document.getElementById("startScreen").style.display = "grid";
+      });
+
+      // Original quiz logic
+      // (shortened version — same as your working quiz above)
+      const originalData = [
+        {
+          q: "What does ICT stand for?",
+          options: [
+            "Information and Computer Technology",
+            "Information and Communication Technology",
+            "Internet and Communication Tools",
+            "Information and Control Technology",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following best describes ICT?",
+          options: [
+            "Only hardware technologies",
+            "Technologies used for printing",
+            "All technologies that enable digital interaction",
+            "Only software systems",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which type of computer is the fastest and most powerful?",
+          options: [
+            "Supercomputer",
+            "Mainframe computer",
+            "Personal computer",
+            "Minicomputer",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Supercomputers are mainly used for:",
+          options: [
+            "Gaming",
+            "Word processing",
+            "Scientific simulations and weather forecasting",
+            "Internet browsing",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which organization typically uses supercomputers?",
+          options: ["Banks", "NASA", "Schools", "Retail stores"],
+          answer: 1,
+        },
+        {
+          q: "Mainframe computers are mostly used in:",
+          options: [
+            "Home offices",
+            "Small businesses",
+            "Large organizations like banks",
+            "Personal use",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which type of computer can support thousands of users simultaneously?",
+          options: [
+            "Mainframe computer",
+            "Supercomputer",
+            "Personal computer",
+            "Embedded computer",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Minicomputers are also called:",
+          options: [
+            "Microcomputers",
+            "Mid-range computers",
+            "Hybrid computers",
+            "Personal computers",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Minicomputers are mainly used by:",
+          options: [
+            "Individuals",
+            "Large organizations",
+            "Small organizations",
+            "Students",
+          ],
+          answer: 2,
+        },
+        {
+          q: "A personal computer (PC) is also known as a:",
+          options: [
+            "Mainframe",
+            "Microcomputer",
+            "Minicomputer",
+            "Workstation",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is NOT an example of a PC application?",
+          options: [
+            "Word processing",
+            "Astronomy simulation",
+            "Accounting",
+            "Database applications",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Workstations are mainly used for:",
+          options: [
+            "Typing documents",
+            "Playing games",
+            "Engineering and design applications",
+            "Web browsing",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which of the following is portable and integrates keyboard, display, and battery?",
+          options: ["Desktop", "Mainframe", "Laptop", "Server"],
+          answer: 2,
+        },
+        {
+          q: "Netbooks are best described as:",
+          options: [
+            "Large and expensive computers",
+            "Ultra-portable and less powerful laptops",
+            "Wearable computers",
+            "Desktop computers",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A Chromebook runs on which operating system?",
+          options: ["Windows", "macOS", "Linux", "Chrome OS"],
+          answer: 3,
+        },
+        {
+          q: "Tablets typically have which type of interface?",
+          options: ["Keyboard", "Touchscreen", "Mouse", "Voice-only"],
+          answer: 1,
+        },
+        {
+          q: "PDAs were mainly used for:",
+          options: [
+            "Video editing",
+            "Keeping schedules and address books",
+            "Gaming",
+            "Coding",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following devices was the precursor to smartphones?",
+          options: ["Tablet", "PDA", "Laptop", "Smartwatch"],
+          answer: 1,
+        },
+        {
+          q: "A handheld computer is characterized by:",
+          options: [
+            "Large display screen",
+            "Ability to fit in one hand",
+            "High memory capacity",
+            "No input capability",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Wearable computers are designed to:",
+          options: [
+            "Replace desktop computers",
+            "Attach to the body and collect data",
+            "Work as standalone servers",
+            "Replace mobile phones",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is an example of wearable technology?",
+          options: ["Google Glass", "Chromebook", "Tablet", "Netbook"],
+          answer: 0,
+        },
+        {
+          q: "Smart clothing like PoloTech Shirt tracks:",
+          options: [
+            "Temperature only",
+            "Heart rate and breathing",
+            "Internet speed",
+            "Battery usage",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A terminal is mainly used to:",
+          options: [
+            "Store data permanently",
+            "Send or receive data from a server",
+            "Perform heavy computations",
+            "Play multimedia files",
+          ],
+          answer: 1,
+        },
+        {
+          q: "An ATM is an example of a:",
+          options: ["Supercomputer", "Terminal", "Server", "Tablet"],
+          answer: 1,
+        },
+        {
+          q: "Embedded computers are found in:",
+          options: [
+            "Vehicles and appliances",
+            "Libraries",
+            "Desktops",
+            "Servers",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Which of the following is NOT a type of computer based on size?",
+          options: [
+            "Supercomputer",
+            "Mainframe computer",
+            "Hybrid computer",
+            "Minicomputer",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Analog computers work on:",
+          options: [
+            "Discrete values",
+            "Binary digits",
+            "Continuous physical quantities",
+            "Hexadecimal codes",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which of the following is an example of an analog computer?",
+          options: ["Thermometer", "Laptop", "Tablet", "Server"],
+          answer: 0,
+        },
+        {
+          q: "Analog computers are known for:",
+          options: [
+            "High accuracy and real-time processing",
+            "Slow speed and low memory",
+            "Programmability",
+            "Handling binary operations",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Digital computers process data represented in:",
+          options: [
+            "Continuous signals",
+            "Discrete values",
+            "Waves",
+            "Mechanical forms",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The number system used by digital computers is:",
+          options: ["Decimal", "Hexadecimal", "Binary", "Octal"],
+          answer: 2,
+        },
+        {
+          q: "Digital computers can be programmed to perform:",
+          options: [
+            "Only mathematical operations",
+            "A wide variety of functions",
+            "Only analog simulations",
+            "Simple manual tasks",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is NOT a feature of digital computers?",
+          options: [
+            "Programmable",
+            "Uses binary code",
+            "Continuous signals",
+            "High accuracy",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Hybrid computers combine features of:",
+          options: [
+            "Analog and digital computers",
+            "Mainframe and personal computers",
+            "Tablets and laptops",
+            "Embedded and wearable devices",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Hybrid computers are mainly used in:",
+          options: [
+            "Educational purposes",
+            "Applications needing both analog and digital data",
+            "Simple home computing",
+            "Video games",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which device used in petrol pumps is an example of a hybrid computer?",
+          options: [
+            "Price scanner",
+            "Processor converting fuel flow to price",
+            "Card reader",
+            "Digital screen",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Analog computers are limited because they:",
+          options: [
+            "Use binary data",
+            "Cannot achieve extreme accuracy",
+            "Cannot process data in real time",
+            "Have too much memory",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Digital computers are preferred because they:",
+          options: [
+            "Use physical quantities",
+            "Are less accurate",
+            "Can store large amounts of data",
+            "Depend on mechanical parts",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Hybrid computers perform data conversion from:",
+          options: [
+            "Binary to octal",
+            "Analog to digital",
+            "Digital to hexadecimal",
+            "Text to binary",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which computer type uses continuous signals?",
+          options: ["Digital", "Analog", "Hybrid", "Mainframe"],
+          answer: 1,
+        },
+        {
+          q: "Which type of computer is commonly found in mobile phones?",
+          options: [
+            "Supercomputer",
+            "Embedded computer",
+            "Minicomputer",
+            "Workstation",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A POS terminal is commonly used in:",
+          options: ["Hospitals", "Retail stores", "Factories", "Schools"],
+          answer: 1,
+        },
+        {
+          q: "Which of the following devices can be categorized as wearable technology?",
+          options: ["Smartwatch", "Desktop PC", "Server", "Tablet"],
+          answer: 0,
+        },
+        {
+          q: "Which of the following computers typically has a CPU built on one chip?",
+          options: ["Mainframe", "PC", "Supercomputer", "Workstation"],
+          answer: 1,
+        },
+        {
+          q: "Which type of computer is no longer commonly used and is now referred to as a midsize server?",
+          options: ["Minicomputer", "Microcomputer", "Workstation", "Netbook"],
+          answer: 0,
+        },
+        {
+          q: "Which computer type provides information to other computers?",
+          options: ["Client", "Server", "Terminal", "PDA"],
+          answer: 1,
+        },
+        {
+          q: "Which of the following represents a thin client?",
+          options: [
+            "A full-featured desktop",
+            "A terminal with limited capabilities",
+            "A server with multiple processors",
+            "A wearable computer",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which computer type is most suitable for CAD applications?",
+          options: ["Laptop", "Workstation", "Tablet", "Netbook"],
+          answer: 1,
+        },
+        {
+          q: "Mobile devices are categorized as:",
+          options: [
+            "Supercomputers",
+            "Personal computers",
+            "Portable computing devices",
+            "Analog systems",
+          ],
+          answer: 2,
+        },
+
+        {
+          q: "A computer is best described as:",
+          options: [
+            "A mechanical calculating device",
+            "An electronic device that processes input to produce output",
+            "A manual data recording machine",
+            "A storage-only device",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is an example of a computer?",
+          options: ["Automatic door", "Laptop", "Refrigerator", "Electric fan"],
+          answer: 1,
+        },
+        {
+          q: "Input refers to:",
+          options: [
+            "Any data or instruction entered into the computer",
+            "The results displayed by the computer",
+            "The process of calculation",
+            "Stored data on the hard drive",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Which of the following can serve as input to a computer?",
+          options: ["Text", "Audio", "Video", "All of these"],
+          answer: 3,
+        },
+        {
+          q: "The process component of a computer involves:",
+          options: [
+            "Storage of data",
+            "Execution of programs by the processor",
+            "Input from devices",
+            "Output generation",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Output from a computer may include:",
+          options: [
+            "Displaying data on screen",
+            "Printing documents",
+            "Activating external devices",
+            "All of these",
+          ],
+          answer: 3,
+        },
+        {
+          q: "Which of the following is an input device?",
+          options: ["Printer", "Keyboard", "Speaker", "Monitor"],
+          answer: 1,
+        },
+        {
+          q: "Sensors are classified as:",
+          options: [
+            "Output devices",
+            "Input devices",
+            "Storage devices",
+            "Control devices",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A light sensor detects:",
+          options: ["Sound", "Motion", "Light intensity", "Humidity"],
+          answer: 2,
+        },
+        {
+          q: "Which of the following is NOT an input device?",
+          options: ["Scanner", "Microphone", "Printer", "Joystick"],
+          answer: 2,
+        },
+        {
+          q: "Which of the following is an output device?",
+          options: ["Camera", "Keyboard", "Monitor", "Scanner"],
+          answer: 2,
+        },
+        {
+          q: "A 3D printer is an example of:",
+          options: [
+            "Input device",
+            "Output device",
+            "Processing unit",
+            "Storage medium",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The physical components of a computer are known as:",
+          options: ["Software", "Hardware", "Middleware", "Applications"],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is a system software?",
+          options: [
+            "MS Word",
+            "Operating System",
+            "Google Chrome",
+            "Calculator",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The CPU is also known as:",
+          options: ["Processor", "Monitor", "Input device", "Memory unit"],
+          answer: 0,
+        },
+        {
+          q: "The CPU consists of which main units?",
+          options: [
+            "ALU, Control Unit, Registers",
+            "RAM, ROM, Hard Disk",
+            "Monitor, Keyboard, Mouse",
+            "Input, Process, Output",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The ALU performs:",
+          options: [
+            "Only data storage",
+            "Arithmetic and logical operations",
+            "Input processing",
+            "Control signal generation",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The Control Unit is responsible for:",
+          options: [
+            "Performing calculations",
+            "Reading and executing instructions",
+            "Managing memory",
+            "Producing sound",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The fetch–decode–execute cycle is managed by:",
+          options: ["RAM", "CPU", "Motherboard", "Input devices"],
+          answer: 1,
+        },
+        {
+          q: "Registers are used to:",
+          options: [
+            "Store data temporarily inside the CPU",
+            "Store data permanently",
+            "Control data flow between components",
+            "Increase cache size",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The system clock in a CPU:",
+          options: [
+            "Provides timing signals for synchronization",
+            "Stores instructions",
+            "Acts as cache memory",
+            "Controls peripheral devices",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Cache memory is:",
+          options: [
+            "Slower than RAM",
+            "Faster than RAM and located near CPU",
+            "Stored on the hard drive",
+            "A type of ROM",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The Level 1 cache is primarily divided into:",
+          options: [
+            "Instruction and data cache",
+            "Primary and secondary cache",
+            "RAM and ROM",
+            "Static and dynamic cache",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The address bus carries:",
+          options: [
+            "Data values",
+            "Addresses only",
+            "Control signals",
+            "Instructions",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The data bus is:",
+          options: [
+            "Unidirectional",
+            "Bidirectional",
+            "For power supply",
+            "Used only for control signals",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The memory management unit (MMU) manages:",
+          options: [
+            "File system operations",
+            "Data flow between CPU and RAM",
+            "Display functions",
+            "Network operations",
+          ],
+          answer: 1,
+        },
+        {
+          q: "RAM stands for:",
+          options: [
+            "Read Access Memory",
+            "Random Access Memory",
+            "Rapid Action Memory",
+            "Read Accurate Memory",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which statement about RAM is true?",
+          options: [
+            "It is permanent memory",
+            "It is non-volatile",
+            "It loses data when power is off",
+            "It is slower than secondary storage",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which type of memory is volatile?",
+          options: ["ROM", "RAM", "PROM", "EEPROM"],
+          answer: 1,
+        },
+        {
+          q: "ROM stores:",
+          options: [
+            "Temporary data",
+            "BIOS programs",
+            "User files",
+            "Running apps",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The BIOS program is stored in:",
+          options: ["RAM", "ROM", "Cache", "Hard disk"],
+          answer: 1,
+        },
+        {
+          q: "PROM can be programmed:",
+          options: [
+            "Multiple times",
+            "Only once",
+            "Using UV light",
+            "During CPU execution",
+          ],
+          answer: 1,
+        },
+        {
+          q: "EPROM can be erased using:",
+          options: ["Heat", "Ultraviolet light", "Magnet", "Electric current"],
+          answer: 1,
+        },
+        {
+          q: "EEPROM can be rewritten using:",
+          options: [
+            "Magnetic waves",
+            "Ultraviolet rays",
+            "Electric voltage",
+            "Laser beam",
+          ],
+          answer: 2,
+        },
+        {
+          q: "EEPROM stores data using:",
+          options: [
+            "Floating gate transistors",
+            "Magnetic platters",
+            "Optical sensors",
+            "Resistors and capacitors",
+          ],
+          answer: 0,
+        },
+        {
+          q: "The motherboard allows:",
+          options: [
+            "Connection between all internal and external components",
+            "Only memory expansion",
+            "Sound generation",
+            "Power storage",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Secondary storage is also called:",
+          options: [
+            "Volatile storage",
+            "Temporary memory",
+            "Backing storage",
+            "Primary storage",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Secondary storage is mainly used for:",
+          options: [
+            "Temporary processing",
+            "Permanent data storage",
+            "Control signals",
+            "Data transfer",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is a secondary storage device?",
+          options: ["RAM", "SSD", "Cache", "Register"],
+          answer: 1,
+        },
+        {
+          q: "Data on a hard disk is stored in:",
+          options: [
+            "Blocks",
+            "Tracks and sectors",
+            "Bytes only",
+            "Clusters only",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The spinning disks inside an HDD are called:",
+          options: ["Platters", "Plates", "Circuits", "Cores"],
+          answer: 0,
+        },
+        {
+          q: "Latency in a hard disk refers to:",
+          options: [
+            "Time to rotate the desired data under the read-write head",
+            "Speed of data transmission",
+            "Data storage size",
+            "Cache refresh rate",
+          ],
+          answer: 0,
+        },
+        {
+          q: "SSD stands for:",
+          options: [
+            "Solid State Disk",
+            "Solid State Drive",
+            "Static Storage Device",
+            "Secondary Storage Drive",
+          ],
+          answer: 1,
+        },
+        {
+          q: "SSD stores data using:",
+          options: [
+            "Magnetic platters",
+            "NAND flash memory",
+            "Optical lasers",
+            "Magnetic tape",
+          ],
+          answer: 1,
+        },
+        {
+          q: "SSD technology mainly relies on:",
+          options: [
+            "Moving parts",
+            "Floating gate transistors",
+            "Rotating platters",
+            "Optical disks",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The floating gate transistor retains its charge because of:",
+          options: [
+            "A dielectric coating",
+            "A magnetic field",
+            "A heat layer",
+            "A conductor wire",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Which of the following is NOT an advantage of SSD over HDD?",
+          options: [
+            "Lower power consumption",
+            "Higher reliability",
+            "Slower access speed",
+            "No moving parts",
+          ],
+          answer: 2,
+        },
+        {
+          q: "SSD endurance refers to:",
+          options: [
+            "The number of read/write cycles before failure",
+            "The battery life of SSD",
+            "Its voltage capacity",
+            "The total data storage size",
+          ],
+          answer: 0,
+        },
+        {
+          q: "Backing storage devices can be:",
+          options: [
+            "Fixed or removable",
+            "Volatile only",
+            "Analog only",
+            "Used only in servers",
+          ],
+          answer: 0,
+        },
+        {
+          q: "RAM is usually _______ than secondary storage.",
+          options: ["Slower", "Faster", "Larger", "Cheaper"],
+          answer: 1,
+        },
+        {
+          q: "Which device controls the flow of data between CPU and RAM?",
+          options: ["Control Unit", "MMU", "Cache", "Bus"],
+          answer: 1,
+        },
+        {
+          q: "ROM is essential for:",
+          options: [
+            "Temporary program storage",
+            "Booting the operating system",
+            "Cache operations",
+            "Network control",
+          ],
+          answer: 1,
+        },
+        {
+          q: "What is the base of the binary number system?",
+          options: ["2", "8", "10", "16"],
+          answer: 0,
+        },
+        {
+          q: "Which digits are used in the binary system?",
+          options: ["0 and 1", "0 to 7", "0 to 9", "0 to F"],
+          answer: 0,
+        },
+        {
+          q: "The denary (decimal) number system uses how many digits?",
+          options: ["2", "8", "10", "16"],
+          answer: 2,
+        },
+        {
+          q: "Which digits are used in the denary system?",
+          options: [
+            "0, 1, 2, 3, 4, 5, 6, 7",
+            "0, 1, 2, 3, 4, 5, 6, 7, 8, 9",
+            "A–F",
+            "0, 1",
+          ],
+          answer: 1,
+        },
+        {
+          q: "The hexadecimal number system is based on:",
+          options: ["Base 2", "Base 8", "Base 10", "Base 16"],
+          answer: 3,
+        },
+        {
+          q: "Which of the following symbols are used in hexadecimal?",
+          options: ["0–7", "0–9 and A–F", "0–9 and G–P", "A–Z"],
+          answer: 1,
+        },
+        {
+          q: "Why do computers use the binary system?",
+          options: [
+            "It is faster to compute manually",
+            "It matches the ON/OFF states of electronic switches",
+            "It saves memory space",
+            "It uses fewer symbols than hexadecimal",
+          ],
+          answer: 1,
+        },
+        {
+          q: "In a binary system, 1 represents:",
+          options: ["OFF", "ON", "Error", "Zero voltage"],
+          answer: 1,
+        },
+        {
+          q: "In a binary system, 0 represents:",
+          options: ["ON", "Active", "OFF", "Signal high"],
+          answer: 2,
+        },
+        {
+          q: "When converting from binary to denary, which base is used?",
+          options: ["2", "8", "10", "16"],
+          answer: 2,
+        },
+        {
+          q: "In binary to hexadecimal conversion, groups of how many bits are used?",
+          options: ["2", "4", "8", "16"],
+          answer: 1,
+        },
+        {
+          q: "What should be done if the last group in a binary-to-hex conversion has less than 4 bits?",
+          options: [
+            "Add 1s to the right",
+            "Add 0s to the left",
+            "Ignore it",
+            "Multiply by 2",
+          ],
+          answer: 1,
+        },
+        {
+          q: "To convert hexadecimal to denary, first convert it into:",
+          options: ["Octal", "Binary", "Roman", "Fractional form"],
+          answer: 1,
+        },
+        {
+          q: "Which hexadecimal digit represents decimal 15?",
+          options: ["E", "F", "G", "D"],
+          answer: 1,
+        },
+        {
+          q: "The binary number 1101 is equal to which hexadecimal digit?",
+          options: ["C", "D", "E", "B"],
+          answer: 1,
+        },
+        {
+          q: "The binary number 1010 corresponds to which hexadecimal value?",
+          options: ["8", "A", "B", "C"],
+          answer: 1,
+        },
+        {
+          q: "One hexadecimal digit represents how many binary digits?",
+          options: ["2", "3", "4", "8"],
+          answer: 2,
+        },
+        {
+          q: "Which of the following is an advantage of hexadecimal representation?",
+          options: [
+            "It is longer to read",
+            "It is harder to interpret",
+            "It is easier and shorter to read and write than binary",
+            "It requires more memory",
+          ],
+          answer: 2,
+        },
+        {
+          q: "Which of the following is NOT a common use of hexadecimal?",
+          options: [
+            "Error codes",
+            "MAC addresses",
+            "IPv6 addresses",
+            "Video compression",
+          ],
+          answer: 3,
+        },
+        {
+          q: "Error codes are often displayed in:",
+          options: ["Binary", "Hexadecimal", "Denary", "Octal"],
+          answer: 1,
+        },
+        {
+          q: "A MAC address is used to:",
+          options: [
+            "Locate a device on the Internet",
+            "Identify a unique device",
+            "Represent color codes",
+            "Store IP addresses",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which part of a MAC address identifies the manufacturer?",
+          options: [
+            "Last six digits",
+            "First six digits",
+            "Middle four digits",
+            "None of these",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is true about a MAC address?",
+          options: [
+            "It changes when connected to a new network",
+            "It is assigned by the user",
+            "It is fixed by the manufacturer",
+            "It is same for all devices of a brand",
+          ],
+          answer: 2,
+        },
+        {
+          q: "An IP address represents:",
+          options: [
+            "A device's hardware ID",
+            "A device's location on a network",
+            "A software version",
+            "A color code",
+          ],
+          answer: 1,
+        },
+        {
+          q: "An IPv6 address is made up of how many bits?",
+          options: ["32 bits", "64 bits", "128 bits", "256 bits"],
+          answer: 2,
+        },
+        {
+          q: "IPv6 addresses are represented in:",
+          options: ["Binary", "Decimal", "Hexadecimal", "Octal"],
+          answer: 2,
+        },
+        {
+          q: "Which of the following differentiates MAC and IP addresses?",
+          options: [
+            "MAC is permanent, IP is changeable",
+            "Both are permanent",
+            "Both are temporary",
+            "IP is permanent, MAC is not",
+          ],
+          answer: 0,
+        },
+        {
+          q: "If a laptop connects to Wi-Fi in two different locations, its:",
+          options: [
+            "MAC address changes",
+            "IP address remains same",
+            "MAC stays same, IP changes",
+            "Both addresses change",
+          ],
+          answer: 2,
+        },
+        {
+          q: "HTML is used for:",
+          options: [
+            "Writing and developing web pages",
+            "Operating system development",
+            "Programming device drivers",
+            "Database management",
+          ],
+          answer: 0,
+        },
+        {
+          q: "HTML color codes are represented in:",
+          options: ["Binary", "Denary", "Hexadecimal", "Octal"],
+          answer: 2,
+        },
+        {
+          q: "HTML colors are made up of combinations of:",
+          options: ["CMY", "RGB", "YUV", "XYZ"],
+          answer: 1,
+        },
+        {
+          q: "What is a bit?",
+          options: [
+            "A binary digit representing 0 or 1",
+            "A hexadecimal unit",
+            "A small hardware chip",
+            "A unit of file storage",
+          ],
+          answer: 0,
+        },
+        {
+          q: "In binary addition, 1 + 1 equals:",
+          options: ["1", "0", "10", "11"],
+          answer: 2,
+        },
+        {
+          q: "An overflow error occurs when:",
+          options: [
+            "A number is negative",
+            "A number is too large to fit in available bits",
+            "A division by zero occurs",
+            "Memory is full",
+          ],
+          answer: 1,
+        },
+        {
+          q: "In an 8-bit register, overflow occurs if the value exceeds:",
+          options: ["128", "255", "256", "512"],
+          answer: 1,
+        },
+        {
+          q: "A logical shift left by one bit is equivalent to:",
+          options: [
+            "Dividing by 2",
+            "Multiplying by 2",
+            "Subtracting 1",
+            "Adding 1",
+          ],
+          answer: 1,
+        },
+        {
+          q: "A logical shift right by one bit is equivalent to:",
+          options: [
+            "Multiplying by 2",
+            "Dividing by 2",
+            "Adding 1",
+            "Subtracting 1",
+          ],
+          answer: 1,
+        },
+        {
+          q: "In a logical binary shift, bits shifted out are:",
+          options: [
+            "Stored in cache",
+            "Lost",
+            "Copied to register",
+            "Sent to output",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Zeros are shifted in at the opposite end during a:",
+          options: [
+            "Circular shift",
+            "Logical shift",
+            "Arithmetic shift",
+            "Overflow",
+          ],
+          answer: 1,
+        },
+        {
+          q: "Two’s complement is used to represent:",
+          options: [
+            "Decimal numbers only",
+            "Positive binary numbers only",
+            "Both positive and negative integers",
+            "Floating point numbers",
+          ],
+          answer: 2,
+        },
+        {
+          q: "In two’s complement, the left-most bit represents:",
+          options: [
+            "A positive value",
+            "A negative value",
+            "A fraction",
+            "Parity check",
+          ],
+          answer: 1,
+        },
+        {
+          q: "In an 8-bit two’s complement system, the range of values is:",
+          options: ["0 to 255", "-255 to 255", "-128 to +127", "0 to 128"],
+          answer: 2,
+        },
+        {
+          q: "The two’s complement of a number is found by:",
+          options: [
+            "Adding 1 to its binary inverse",
+            "Subtracting 1 from its binary form",
+            "Reversing bits only",
+            "Multiplying by 2",
+          ],
+          answer: 0,
+        },
+        {
+          q: "To convert a negative denary number into binary two’s complement, you must:",
+          options: [
+            "Invert bits and add 1",
+            "Add bits together",
+            "Multiply by 2",
+            "Divide by 2",
+          ],
+          answer: 0,
+        },
+        {
+          q: "What is the two’s complement of 00000101?",
+          options: ["11111010", "11111011", "00000110", "10000101"],
+          answer: 1,
+        },
+        {
+          q: "Which of the following is the binary for -1 in two’s complement (8-bit)?",
+          options: ["11111110", "11111111", "00000001", "10000000"],
+          answer: 1,
+        },
+        {
+          q: "The binary number 01111111 represents what in two’s complement?",
+          options: ["-127", "+127", "0", "+255"],
+          answer: 1,
+        },
+        {
+          q: "The binary number 10000000 in two’s complement represents:",
+          options: ["0", "-1", "-128", "+128"],
+          answer: 2,
+        },
+        {
+          q: "The hexadecimal value 'A' equals which decimal value?",
+          options: ["9", "10", "11", "12"],
+          answer: 1,
+        },
+        {
+          q: "What is the hexadecimal equivalent of binary 1111?",
+          options: ["E", "F", "D", "C"],
+          answer: 1,
+        },
+        {
+          q: "Binary data representation in computers is mainly used because:",
+          options: [
+            "It simplifies hardware design using ON/OFF states",
+            "It saves time for users",
+            "It displays more colors",
+            "It improves software speed",
+          ],
+          answer: 0,
+        },
+      ];
+
+      function shuffleArray(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      function prepareShuffledQuestions() {
+        const c = originalData.map((o) => ({
+          q: o.q,
+          options: o.options.slice(),
+          answer: o.answer,
+        }));
+        shuffleArray(c);
+        return c.map((it) => {
+          const o = it.options.map((x, i) => ({ opt: x, idx: i }));
+          shuffleArray(o);
+          return {
+            q: it.q,
+            options: o.map((x) => x.opt),
+            answer: o.findIndex((x) => x.idx === it.answer),
+          };
+        });
+      }
+
+      let questions = [],
+        current = 0,
+        timerInterval = null,
+        QUESTION_TIME = 30,
+        timeLeft = QUESTION_TIME,
+        score = 0,
+        right = 0,
+        wrong = 0,
+        skipped = 0,
+        locked = false;
+
+      const startScreen = document.getElementById("startScreen"),
+        quizScreen = document.getElementById("quizScreen"),
+        resultScreen = document.getElementById("resultScreen"),
+        questionEl = document.getElementById("question"),
+        optionsEl = document.getElementById("options"),
+        timerEl = document.getElementById("timer"),
+        scoreEl = document.getElementById("score"),
+        qcounter = document.getElementById("qcounter"),
+        progressBar = document.getElementById("progressBar"),
+        progressText = document.getElementById("progressText"),
+        feedback = document.getElementById("feedback"),
+        finalScore = document.getElementById("finalScore"),
+        finalPercent = document.getElementById("finalPercent"),
+        rightCount = document.getElementById("rightCount"),
+        wrongCount = document.getElementById("wrongCount"),
+        skippedCount = document.getElementById("skippedCount");
+
+      document.getElementById("startBtn").addEventListener("click", startQuiz);
+      document
+        .getElementById("restartBtn")
+        .addEventListener("click", () => location.reload());
+      document
+        .getElementById("skipBtn")
+        .addEventListener("click", skipQuestion);
+      document
+        .getElementById("rulesBtn")
+        .addEventListener("click", () =>
+          alert(
+            "Rules:\n- 50 questions\n- 30 seconds each\n- Random order\n- Skip to move on"
+          )
+        );
+
+      function startQuiz() {
+        questions = prepareShuffledQuestions();
+        startScreen.style.display = "none";
+        quizScreen.style.display = "";
+        current = 0;
+        score = 0;
+        right = 0;
+        wrong = 0;
+        skipped = 0;
+        scoreEl.innerText = score;
+        loadQuestion();
+      }
+      function loadQuestion() {
+        locked = false;
+        clearInterval(timerInterval);
+        timeLeft = QUESTION_TIME;
+        timerEl.innerText = `Time Left: ${timeLeft}s`;
+        const i = questions[current];
+        questionEl.innerText = i.q;
+        optionsEl.innerHTML = "";
+        i.options.forEach((o, k) => {
+          const b = document.createElement("button");
+          b.className = "option";
+          b.innerText = o;
+          b.onclick = () => selectOption(b, k);
+          optionsEl.appendChild(b);
+        });
+        updateProgressUI();
+        startTimer();
+        feedback.innerText = "";
+      }
+      function startTimer() {
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerEl.innerText = `Time Left: ${timeLeft}s`;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeout();
+          }
+        }, 1000);
+      }
+      function disableOptions() {
+        optionsEl
+          .querySelectorAll(".option")
+          .forEach((o) => o.classList.add("disabled"));
+        locked = true;
+      }
+      function selectOption(btn, sel) {
+        if (locked) return;
+        clearInterval(timerInterval);
+        disableOptions();
+        const cI = questions[current].answer;
+        if (sel === cI) {
+          btn.classList.add("correct");
+          feedback.innerText = "Correct!";
+          score++;
+          right++;
+        } else {
+          btn.classList.add("wrong");
+          optionsEl.querySelectorAll(".option")[cI].classList.add("correct");
+          feedback.innerText = "Wrong";
+          wrong++;
+        }
+        scoreEl.innerText = score;
+        setTimeout(() => {
+          current++;
+          current < questions.length ? loadQuestion() : showResult();
+        }, 1200);
+      }
+      function handleTimeout() {
+        disableOptions();
+        optionsEl
+          .querySelectorAll(".option")
+          [questions[current].answer].classList.add("correct");
+        feedback.innerText = "Time up!";
+        skipped++;
+        setTimeout(() => {
+          current++;
+          current < questions.length ? loadQuestion() : showResult();
+        }, 800);
+      }
+      function skipQuestion() {
+        if (locked) return;
+        disableOptions();
+        feedback.innerText = "Skipped";
+        skipped++;
+        setTimeout(() => {
+          current++;
+          current < questions.length ? loadQuestion() : showResult();
+        }, 500);
+      }
+      function updateProgressUI() {
+        const p = Math.round((current / questions.length) * 100);
+        progressBar.style.width = p + "%";
+        progressText.innerText = p + "%";
+        qcounter.innerText = `Question ${Math.min(
+          current + 1,
+          questions.length
+        )} / ${questions.length}`;
+      }
+      function showResult() {
+        clearInterval(timerInterval);
+        quizScreen.style.display = "none";
+        resultScreen.style.display = "";
+        finalScore.innerText = `${score} / ${questions.length}`;
+        const percent = Math.round((score / questions.length) * 100);
+        finalPercent.innerText = percent + "%";
+        rightCount.innerText = right;
+        wrongCount.innerText = wrong;
+        skippedCount.innerText = skipped;
+      }
+
+      // 🔹 Send Result via EmailJS
+      document.getElementById("sendEmailBtn").addEventListener("click", () => {
+        const percent = Math.round((score / questions.length) * 100);
+        emailjs
+          .send("service_by3lis8", "template_a2e9i4z", {
+            user_name: userInfo.name,
+            user_email: userInfo.email,
+            total_questions: questions.length,
+            correct_answers: right,
+            wrong_answers: wrong,
+            skipped_answers: skipped,
+            score_percent: percent,
+          })
+          .then(() => alert("✅ Result sent successfully!"))
+          .catch((err) => alert("❌ Failed to send email: " + err.text));
+      });
+    </script>
+  </body>
+</html>
